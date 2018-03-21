@@ -3,12 +3,12 @@ from bs4 import BeautifulSoup
 from queue import Queue
 
 
-qt_chapters = 5
+qt_chapters = 50
 base_url = 'http://www.wuxiaworld.com'
 chapter_queue = Queue()
 chapter_queue.put('/novel/coiling-dragon/cd-book-1-chapter-1')
 
-book = []
+chapters = []
 
 for x in range(0, qt_chapters):
     chapter_url = chapter_queue.get()
@@ -31,14 +31,21 @@ for x in range(0, qt_chapters):
     chapter_queue.put(next_chapter_url)
 
     paragraphs = soup.find_all('p')
-    chapter = ''
+    chapter = []
     for paragraph in paragraphs :
         if paragraph.get_text() != '' and paragraph.get_text() != 'Previous Chapter' and \
             paragraph.get_text() != 'Facebook' and paragraph.get_text() != 'Discord' and \
             paragraph.get_text() != 'RSS' and paragraph.get_text() != 'Twitter' and \
             paragraph.get_text() != 'Contact Us' and paragraph.get_text() != 'Privacy Policy' and \
             paragraph.get_text() != 'Copyright © 2018 WuxiaWorld. All rights reserved.':
-            chapter += str(paragraph)
+            chapter.append(paragraph)
     print("Chapter done.")
-    book.append(chapter)
-print(book)
+    chapters.append(chapter)
+print(chapters)
+
+book = open('book.html', 'w')
+for chapter in chapters:
+    for paragraph in chapter:
+        book.write(str(paragraph))
+
+book.close()
