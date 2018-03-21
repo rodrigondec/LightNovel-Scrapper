@@ -1,42 +1,44 @@
-from lxml import html
 import requests
+from bs4 import BeautifulSoup
+from queue import Queue
 
 
+qt_chapters = 5
+base_url = 'http://www.wuxiaworld.com'
+chapter_queue = Queue()
+chapter_queue.put('/novel/coiling-dragon/cd-book-1-chapter-1')
 
-capitulos = input("num de capitulos: ")
+book = []
 
-url = raw_input('url do cap 1: ')
-# url = 'http://www.wuxiaworld.com/st-index/st-book-1-chapter-1/'
+for x in range(0, qt_chapters):
+    chapter_url = chapter_queue.get()
+    print("URL: "+base_url+chapter_url)
+    page = requests.get(base_url+chapter_url)
 
-file = open('livro.html', 'w')
+    soup = BeautifulSoup(page.content, 'html.parser')
 
-file.write('<body style="width: 50%;float: none; margin: auto; background-color: #121110;">')
+    # print(soup)
 
-for x in xrange(0, capitulos):
-	print "cap "+str(x+1)
-	file.write('<h2><font color="#7C7567">')
-	file.write(url)
-	file.write('</font></h2>')
+    script  = soup.find_all("script")[3]
+    values = script.get_text().replace(' ', '').replace('\n', '').replace('var', '').split(';')
+    next_chapter_url = None
+    for value in values:
+        data = value.split('=')
+        if data[0] == 'NEXT_CHAPTER':
+            next_chapter_url = data[1]
+            next_chapter_url = next_chapter_url.replace('\'', '')
+            print("next url: "+next_chapter_url)
+    chapter_queue.put(next_chapter_url)
 
-	page = requests.get(url)
-	tree = html.fromstring(page.content)
-
-	paragrafos = tree.xpath('//div[@itemprop="articleBody"]/p/text()')
-	paragrafos = paragrafos[1:len(paragrafos)-3]
-	for paragrafo in paragrafos:
-		# print>>file, paragrafo.encode('utf-8')
-		file.write('<p><font size="5" color="#7C7567">')
-		file.write(paragrafo.encode('utf-8'))
-		file.write('</font></p>')
-		# print paragrafo
-
-
-	# file.write("\n\n")
-
-	url = tree.xpath('//div[@itemprop="articleBody"]/p/span[@style="float: right;"]/a/@href')
-	url  = url[0]
-	# print url
-
-file.write('</body>')
-
-file.close()
+    paragraphs = soup.find_all('p')
+    chapter = ''
+    for paragraph in paragraphs :
+        if paragraph.get_text() != '' and paragraph.get_text() != 'Previous Chapter' and \
+            paragraph.get_text() != 'Facebook' and paragraph.get_text() != 'Discord' and \
+            paragraph.get_text() != 'RSS' and paragraph.get_text() != 'Twitter' and \
+            paragraph.get_text() != 'Contact Us' and paragraph.get_text() != 'Privacy Policy' and \
+            paragraph.get_text() != 'Copyright © 2018 WuxiaWorld. All rights reserved.':
+            chapter += str(paragraph)
+    print("Chapter done.")
+    book.append(chapter)
+print(book)
