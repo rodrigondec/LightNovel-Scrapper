@@ -33,7 +33,7 @@ class Scrapper():
     def get_current_soup(self):
         chapter_url = self.chapter_queue.get()
         if self.debug:
-            print('Geting soup for link: {}...'.format(Scrapper.base_url + chapter_url))
+            print('Geting current soup from link: {}...'.format(Scrapper.base_url + chapter_url))
         page = requests.get(Scrapper.base_url + chapter_url)
 
         self.current_soup = BeautifulSoup(page.content, 'html.parser')
@@ -54,7 +54,7 @@ class Scrapper():
                 next_chapter_url = next_chapter_url.replace('\'', '')
         self.chapter_queue.put(next_chapter_url)
         if self.debug:
-            print('Next chapter link: {}.'.format(next_chapter_url))
+            print('Next chapter link: {}.'.format(self.base_url + next_chapter_url))
 
     def proccess_soup(self):
         if self.debug:
