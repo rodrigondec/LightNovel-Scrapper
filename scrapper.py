@@ -46,7 +46,7 @@ print(chapters)
 book = open(book_title+'.html', 'w')
 book.write('<!doctype html><html lang="en"><head><meta charset="utf-8" />'
            '<title>'+book_title+'</title>'
-           '<style>p { margin-top: 1em; text-indent: 0em; } h1 {margin-top: 1em} h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} .center { text-align: center; } .pagebreak { page-break-before: always; }</style></head><body>')
+           '<style>p { margin-top: 1em; text-indent: 0em; } h1 {margin-top: 1em; text-align: center} h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} .center { text-align: center; } .pagebreak { page-break-before: always; }</style></head><body>')
 book.write('<h1>'+book_title+'</h1><div class="pagebreak"></div>')
 book.write('<div id="toc">'
            '<h2>'
@@ -60,9 +60,9 @@ book.write('</ul></div><div class="pagebreak"></div>')
 
 index = 0
 for chapter in chapters:
-    book.write('<h4 id="ch'+str(index)+'">')
+    book.write('<h3 id="ch'+str(index)+'">')
     book.write(chapter[0].get_text())
-    book.write('</h4>')
+    book.write('</h3>')
     index += 1
     for paragraph in chapter[1:]:
         book.write('<p>')
