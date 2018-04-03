@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from queue import Queue
 import argparse
 from time import sleep
+import json
 
 
 class Scrapper():
@@ -10,18 +11,18 @@ class Scrapper():
 
     def __init__(self):
         ap = argparse.ArgumentParser()
-        ap.add_argument('-u', '--url', default='/novel/coiling-dragon/cd-book-6-chapter-5', help='Index of first wanted chapter')
+        ap.add_argument('-u', '--url', default='/novel/coiling-dragon/cd-book-10-chapter-44', help='Index of first wanted chapter')
         ap.add_argument('-qc', '--chapters', default=50, type=int, help='Quantity of chapters wanted')
         ap.add_argument('-t', '--title', default='Coiling Dragon', help='Title of the light novel')
         ap.add_argument('-d', '--delay', default=1, type=int, help=('Delay between scraping chapters (don\'t wanna '
                                                                     'get banned!)'))
         ap.add_argument('-v', '--verbose', default=True, action='store_true', help='Adds debugging statements to outpu')
+        ap.add_argument('-load', '--load', default=True, action='store_true', help='Set cache for next link')
         args = ap.parse_args()
 
         self.chapter_queue = Queue()
 
         self.book_title = args.title
-        self.chapter_queue.put(args.url)
         self.qt_chapters = args.chapters
         self.delay = args.delay
         self.debug = args.verbose
@@ -30,8 +31,31 @@ class Scrapper():
 
         self.current_soup = None
 
+        self.data = {}
+        self.data['last'] = None
+        self.data['next'] = None
+
+        if args.load:
+            self.load_data()
+            self.chapter_queue.put(self.data['next'])
+        else:
+            self.chapter_queue.put(args.url)
+
+    def load_data(self):
+        if self.debug:
+            print('Loading chapter link from file...')
+        with open("data.json", 'r') as file:
+            self.data = json.load(file)
+
+    def save_data(self):
+        if self.debug:
+            print('Saving chapter link to file...')
+        with open("data.json", 'w') as file:
+            json.dump(self.data, file)
+
     def get_current_soup(self):
         chapter_url = self.chapter_queue.get()
+        self.data['last'] = chapter_url
         if self.debug:
             print('Geting current soup from link: {}...'.format(Scrapper.base_url + chapter_url))
         page = requests.get(Scrapper.base_url + chapter_url)
@@ -44,7 +68,7 @@ class Scrapper():
     def get_next_link(self):
         if self.debug:
             print('Geting link of the next chapter...')
-        script = self.current_soup.find_all("script")[3]
+        script = self.current_soup.find_all("script")[6]
         values = script.get_text().replace(' ', '').replace('\n', '').replace('var', '').split(';')
         next_chapter_url = None
         for value in values:
@@ -53,6 +77,7 @@ class Scrapper():
                 next_chapter_url = data[1]
                 next_chapter_url = next_chapter_url.replace('\'', '')
         self.chapter_queue.put(next_chapter_url)
+        self.data['next'] = next_chapter_url
         if self.debug:
             print('Next chapter link: {}.'.format(self.base_url + next_chapter_url))
 
@@ -117,6 +142,7 @@ class Scrapper():
             self.get_current_soup()
             self.proccess_soup()
             sleep(self.delay)
+        self.save_data()
         self.save_file()
 
 if __name__ == '__main__':
