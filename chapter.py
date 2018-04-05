@@ -23,7 +23,7 @@ class Chapter:
             self.paragraphs.append("<p>{}</p>".format(p.get_text()))
 
     def build_chapter(self):
-        self.paragraphs[0] = "<h3>{}</h3>".format(self.title)
+        self.paragraphs[0] = "<h2>{}</h2>".format(self.title)
         content = ''.join(self.paragraphs)
         self.paragraphs[0] = "{}".format(self.title)
         return content
