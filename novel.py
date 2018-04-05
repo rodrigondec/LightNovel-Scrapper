@@ -1,77 +1,10 @@
 import json
 from bs4 import BeautifulSoup
-import requests
-from time import sleep
 from ebooklib import epub
 import uuid
-
-
-BASE_URL = 'http://www.wuxiaworld.com'
-DELAY = 0
-
-
-def request_page(url):
-    sleep(DELAY)
-    return requests.get(BASE_URL + url)
-
-
-class Chapter:
-    def __init__(self, url=None, title=None):
-        self.title = title
-        self.url = url
-
-        self.chapter_soup = None
-        self.paragraphs = []
-
-    def load_soup(self):
-        page = request_page(self.url)
-        self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
-
-    def process(self):
-        self.load_soup()
-
-        ps = self.chapter_soup.find('div', attrs={'class': 'content'}).find_all('p')
-
-        for p in ps:
-            self.paragraphs.append(p.get_text())
-
-    def build_chapter(self):
-        self.paragraphs[0] = "<h1>{}</h1>".format(self.title)
-        content = '<br /><br />'.join(self.paragraphs)
-        self.paragraphs[0] = "{}".format(self.title)
-        return content
-
-
-class Book:
-    def __init__(self, title=None, number=None):
-        self.number = number
-        self.title = title
-        self.chapters = []
-
-    def __str__(self):
-        return self.title
-
-    def add_chapter(self, chapter):
-        self.chapters.append(chapter)
-
-    def process(self):
-        for chapter in self.chapters:
-            chapter.process()
-
-    def build_chapters(self, book_epub):
-        chapters_epub = []
-        for chapter in self.chapters:
-            chapter_epub = epub.EpubHtml(
-                title=chapter.title,
-                file_name='{}.xhtml'.format(uuid.uuid4().hex),
-                lang='en'
-            )
-            chapter_epub.content = chapter.build_chapter()
-            book_epub.add_item(chapter_epub)
-            book_epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex), )
-            chapters_epub.append(chapter_epub)
-
-        return chapters_epub
+from utils import request_page
+from chapter import Chapter
+from book import Book
 
 
 class Novel:
@@ -167,9 +100,5 @@ class Novel:
 
             epub.write_epub('{}.epub'.format(book_epub.title), book_epub, {})
 
-Novel.load_novels()
-c = Novel.get_novel('Coiling Dragon')
-assert isinstance(c, Novel)
-c.add_chosen_book("1")
-c.add_chosen_book("2")
-c.process()
+
+
