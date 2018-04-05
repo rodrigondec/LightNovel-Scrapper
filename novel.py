@@ -94,7 +94,7 @@ class Novel:
             book_epub.add_item(epub.EpubNav())
             book_epub.spine = ['Nav'] + chapters_epub
 
-            style = 'BODY {color: white;}'
+            style = 'p { margin-top: 1em; text-indent: 0em; } h1 {margin-top: 1em; text-align: center} h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} .center { text-align: center; } .pagebreak { page-break-before: always; }'
             nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=style)
             book_epub.add_item(nav_css)
 

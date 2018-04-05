@@ -20,11 +20,10 @@ class Chapter:
         ps = self.chapter_soup.find('div', attrs={'class': 'content'}).find_all('p')
 
         for p in ps:
-            self.paragraphs.append(p.get_text())
+            self.paragraphs.append("<p>{}</p>".format(p.get_text()))
 
     def build_chapter(self):
-        self.paragraphs[0] = "<h1>{}</h1>".format(self.title)
-        content = '<br /><br />'.join(self.paragraphs)
+        self.paragraphs[0] = "<h3>{}</h3>".format(self.title)
+        content = ''.join(self.paragraphs)
         self.paragraphs[0] = "{}".format(self.title)
         return content
-    
