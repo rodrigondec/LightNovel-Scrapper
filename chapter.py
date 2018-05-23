@@ -10,11 +10,15 @@ class Chapter:
         self.chapter_soup = None
         self.paragraphs = []
 
+    def __str__(self):
+        return self.title
+
     def load_soup(self):
         page = request_page(self.url)
         self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
 
     def process(self):
+        print("Processing paragraphs for chapter {}...".format(self))
         self.load_soup()
 
         ps = self.chapter_soup.find('div', attrs={'class': 'content'}).find_all('p')

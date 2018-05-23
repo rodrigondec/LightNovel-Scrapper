@@ -12,6 +12,7 @@ class Novel:
 
     @staticmethod
     def load_novels():
+        print('Loading novels...')
         with open("novels.json", 'r') as file:
             data = json.load(file)
             for novel in data['novels']:
@@ -20,7 +21,7 @@ class Novel:
                 has_books = novel['has_books']
                 skip_first = novel['skip_first']
                 Novel.list[title] = Novel(title, index_url, has_books, skip_first)
-
+        print(Novel.list)
     @staticmethod
     def get_novel(name):
         return Novel.list[name]
@@ -40,13 +41,16 @@ class Novel:
         return "Novel {}".format(self.title)
 
     def load_soup(self):
+        print("Loading index soup...")
         page = request_page(self.index_url)
         self.index_soup = BeautifulSoup(page.content, 'html.parser')
 
     def add_chosen_book(self, book_number):
+        print("Book {} added to queue!".format(book_number))
         self.chosen_books.append(book_number)
 
     def load_books(self):
+        print("Loading books...")
         if self.has_books:
 
             accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
@@ -55,12 +59,13 @@ class Novel:
             for panel in panels:
                 book = Book()
                 book.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
+
                 if self.skip_first:
                     book.number -= 1
-                    book.number = str(book.number)
-                    if book.number == "0":
+                    if book.number == 0:
                         continue
 
+                book.number = str(book.number)
                 if book.number not in self.chosen_books:
                     continue
 
@@ -71,17 +76,22 @@ class Novel:
                     book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
 
                 self.books.append(book)
+                print("Book {} done!".format(book))
 
     def process(self):
+        print("Processing...")
         self.load_soup()
         self.load_books()
 
         for book in self.books:
+            print("Processing book {}...".format(book))
             book.process()
+            print("Book {} processed!".format(book))
 
         self.build_epubs()
 
     def build_epubs(self):
+        print("Building epubs...")
         for book in self.books:
             book_epub = epub.EpubBook()
             book_epub.set_title("{} - {}".format(self.title, book.title))
@@ -104,3 +114,4 @@ class Novel:
             book_epub.add_item(nav_css)
 
             epub.write_epub('{}.epub'.format(book_epub.title), book_epub, {})
+            print("Epub for book {} done!".format(book))
