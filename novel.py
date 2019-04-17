@@ -51,6 +51,11 @@ class Novel:
     def __str__(self):
         return f"Novel {self.title}"
 
+    def _is_book_chosen(self, book_number):
+        if book_number in self.chosen_books:
+            return True
+        return False
+
     def load_soup(self):
         logging.info("Loading index soup...")
         page = request_page(self.index_url)
@@ -76,7 +81,7 @@ class Novel:
                     continue
 
             book.number = str(book.number)
-            if book.number not in self.chosen_books:
+            if not self._is_book_chosen(book.number):
                 continue
 
             book.title = panel.find('h4').find('span', attrs={'class': 'title'}).find('a').get_text().strip()
@@ -134,9 +139,12 @@ class NovelBookLess(Novel):
         accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
         panels = accordion.find_all('div', attrs={'class': 'panel'})
 
-        assert len(panels) == 1
-
-        panel = panels[0]
+        if self.skip_first:
+            assert len(panels) == 2
+            panel = panels[2]
+        else:
+            assert len(panels) == 1
+            panel = panels[0]
 
         logging.info("Calculating total of artificial books...")
 
@@ -153,7 +161,8 @@ class NovelBookLess(Novel):
             book.number = book_number
 
             book.number = str(book.number)
-            if book.number not in self.chosen_books:
+
+            if not self._is_book_chosen(book.number):
                 continue
 
             initial_index = index * qt_chapter_per_book
