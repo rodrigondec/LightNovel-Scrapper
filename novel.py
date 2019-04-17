@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Novel:
-    list = {}
+    db = {}
 
     @classmethod
     def load_novels(cls):
@@ -20,21 +20,26 @@ class Novel:
         with open("novels.json", 'r') as file:
             data = json.load(file)
             for novel_data in data:
-                title = novel_data['title']
-                cls.list[title] = Novel.from_dict(novel_data)
-        logging.info(cls.list)
+                title = novel_data.get('title')
+                has_books = novel_data.pop('has_books')
+
+                if has_books:
+                    novel = Novel.from_dict(novel_data)
+                else:
+                    novel = NovelBookLess.from_dict(novel_data)
+                cls.db[title] = novel
+        logging.info(cls.db)
 
     @classmethod
     def get_novel(cls, title):
-        return cls.list.get(title)
+        return cls.db.get(title)
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data['title'], data['index_url'], data['has_books'], data['skip_first'])
+        return cls(data.get('title'), data.get('index_url'), data.get('has_books'))
 
-    def __init__(self, title, index_url, has_books, skip_first):
+    def __init__(self, title, index_url, skip_first):
         self.title = title
-        self.has_books = has_books
         self.skip_first = skip_first
         self.index_url = index_url
         self.chosen_books = []
@@ -57,66 +62,31 @@ class Novel:
 
     def load_books(self):
         logging.info("Loading books...")
-        if self.has_books:
 
-            accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
-            panels = accordion.find_all('div', attrs={'class': 'panel'})
+        accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
+        panels = accordion.find_all('div', attrs={'class': 'panel'})
 
-            for panel in panels:
-                book = Book()
-                book.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
+        for panel in panels:
+            book = Book()
+            book.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
 
-                if self.skip_first:
-                    book.number -= 1
-                    if book.number == 0:
-                        continue
-
-                book.number = str(book.number)
-                if book.number not in self.chosen_books:
+            if self.skip_first:
+                book.number -= 1
+                if book.number == 0:
                     continue
 
-                book.title = panel.find('h4').find('span', attrs={'class': 'title'}).find('a').get_text().strip()
+            book.number = str(book.number)
+            if book.number not in self.chosen_books:
+                continue
 
-                links = panel.find('div', attrs={'class': 'panel-body'}).find_all('a')
-                for link in links:
-                    book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
-
-                self.books.append(book)
-                logging.info("Book {} done!".format(book))
-        else:
-            accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
-            panels = accordion.find_all('div', attrs={'class': 'panel'})
-
-            assert len(panels) == 1
-
-            panel = panels[0]
+            book.title = panel.find('h4').find('span', attrs={'class': 'title'}).find('a').get_text().strip()
 
             links = panel.find('div', attrs={'class': 'panel-body'}).find_all('a')
+            for link in links:
+                book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
 
-            qt_chapter_per_book = 150
-            qt_books = ceil(len(links)/qt_chapter_per_book)
-
-            for index in range(0, qt_books):
-                book_number = index+1
-                book = Book()
-                book.number = book_number
-
-                book.number = str(book.number)
-                if book.number not in self.chosen_books:
-                    continue
-
-                book.title = f"{self.title} - book {book.number}"
-
-                initial_index = index*qt_chapter_per_book
-                final_index = initial_index + qt_chapter_per_book
-                if final_index > len(links):
-                    final_index = len(links)-1
-
-                for link in links[initial_index:final_index]:
-                    book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
-
-                self.books.append(book)
-                logging.info("Book {} done!".format(book))
+            self.books.append(book)
+            logging.info("Book {} done!".format(book))
 
     def process(self):
         logging.info("Processing...")
@@ -155,3 +125,46 @@ class Novel:
 
             epub.write_epub(f'{book_epub.title}.epub', book_epub, {})
             logging.info(f"Epub for book {book} done!")
+
+
+class NovelBookLess(Novel):
+    def load_books(self):
+        logging.info("Loading books...")
+
+        accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
+        panels = accordion.find_all('div', attrs={'class': 'panel'})
+
+        assert len(panels) == 1
+
+        panel = panels[0]
+
+        logging.info("Calculating total of artificial books...")
+
+        links = panel.find('div', attrs={'class': 'panel-body'}).find_all('a')
+
+        qt_chapter_per_book = 150
+        qt_books = ceil(len(links) / qt_chapter_per_book)
+
+        logging.info(f"Total of artificial books is {qt_books}")
+
+        for index in range(0, qt_books):
+            book_number = index + 1
+            book = Book()
+            book.number = book_number
+
+            book.number = str(book.number)
+            if book.number not in self.chosen_books:
+                continue
+
+            initial_index = index * qt_chapter_per_book
+            final_index = initial_index + qt_chapter_per_book
+            if final_index > len(links):
+                final_index = len(links) - 1
+
+            book.title = f"book {book.number} - {final_index - initial_index} chapters"
+
+            for link in links[initial_index:final_index]:
+                book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
+
+            self.books.append(book)
+            logging.info("Book {} done!".format(book))
