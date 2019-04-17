@@ -1,3 +1,4 @@
+from math import ceil
 import logging
 import json
 from bs4 import BeautifulSoup
@@ -43,19 +44,19 @@ class Novel:
         self.books = []
 
     def __str__(self):
-        return "Novel {}".format(self.title)
+        return f"Novel {self.title}"
 
     def load_soup(self):
-        print("Loading index soup...")
+        logging.info("Loading index soup...")
         page = request_page(self.index_url)
         self.index_soup = BeautifulSoup(page.content, 'html.parser')
 
     def add_chosen_book(self, book_number):
-        print("Book {} added to queue!".format(book_number))
+        logging.info(f"Book {book_number} added to queue!")
         self.chosen_books.append(book_number)
 
     def load_books(self):
-        print("Loading books...")
+        logging.info("Loading books...")
         if self.has_books:
 
             accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
@@ -84,22 +85,22 @@ class Novel:
                 print("Book {} done!".format(book))
 
     def process(self):
-        print("Processing...")
+        logging.info("Processing...")
         self.load_soup()
         self.load_books()
 
         for book in self.books:
-            print("Processing book {}...".format(book))
+            logging.info(f"Processing book {book}...")
             book.process()
-            print("Book {} processed!".format(book))
+            logging.info(f"Book {book} processed!")
 
         self.build_epubs()
 
     def build_epubs(self):
-        print("Building epubs...")
+        logging.info("Building epubs...")
         for book in self.books:
             book_epub = epub.EpubBook()
-            book_epub.set_title("{} - {}".format(self.title, book.title))
+            book_epub.set_title(f"{self.title} - {book.title}")
             book_epub.set_identifier(uuid.uuid4().hex)
             book_epub.set_language('en')
 
@@ -109,14 +110,14 @@ class Novel:
             book_epub.add_item(epub.EpubNav())
             book_epub.spine = ['Nav'] + chapters_epub
 
-            style = 'p { margin-top: 1em; text-indent: 0em; } ' \
-                    'h1 {margin-top: 1em; text-align: center} ' \
-                    'h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} ' \
-                    'h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} ' \
-                    '.center { text-align: center; } ' \
-                    '.pagebreak { page-break-before: always; } '
-            nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=style)
+            st = 'p { margin-top: 1em; text-indent: 0em; } ' \
+                 'h1 {margin-top: 1em; text-align: center} ' \
+                 'h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} ' \
+                 'h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} ' \
+                 '.center { text-align: center; } ' \
+                 '.pagebreak { page-break-before: always; } '
+            nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=st)
             book_epub.add_item(nav_css)
 
-            epub.write_epub('{}.epub'.format(book_epub.title), book_epub, {})
-            print("Epub for book {} done!".format(book))
+            epub.write_epub(f'{book_epub.title}.epub', book_epub, {})
+            logging.info(f"Epub for book {book} done!")
