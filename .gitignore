@@ -4,3 +4,5 @@
 w_env/
 
 env/
+
+*.pyc
