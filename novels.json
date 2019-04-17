@@ -1,5 +1,5 @@
-{"novels": [
+[
     {"title": "Coiling Dragon", "index_url": "/novel/coiling-dragon", "has_books": true, "skip_first": true},
-    {"title": "Archfiend", "index_url": "/novel/archfiend", "has_books": true, "skip_first": false}
-  ]
-}
+    {"title": "Archfiend", "index_url": "/novel/archfiend", "has_books": true, "skip_first": false},
+    {"title": "Battle Through the Heavens", "index_url": "/novel/battle-through-the-heavens", "has_books": false, "skip_first": false}
+]

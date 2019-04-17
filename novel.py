@@ -1,3 +1,4 @@
+import logging
 import json
 from bs4 import BeautifulSoup
 from ebooklib import epub
@@ -6,25 +7,29 @@ from utils import request_page
 from chapter import Chapter
 from book import Book
 
+logging.basicConfig(level=logging.INFO)
+
 
 class Novel:
     list = {}
 
-    @staticmethod
-    def load_novels():
-        print('Loading novels...')
+    @classmethod
+    def load_novels(cls):
+        logging.info('Loading novels...')
         with open("novels.json", 'r') as file:
             data = json.load(file)
-            for novel in data['novels']:
-                title = novel['title']
-                index_url = novel['index_url']
-                has_books = novel['has_books']
-                skip_first = novel['skip_first']
-                Novel.list[title] = Novel(title, index_url, has_books, skip_first)
-        print(Novel.list)
-    @staticmethod
-    def get_novel(name):
-        return Novel.list[name]
+            for novel_data in data:
+                title = novel_data['title']
+                cls.list[title] = Novel.from_dict(novel_data)
+        logging.info(cls.list)
+
+    @classmethod
+    def get_novel(cls, title):
+        return cls.list.get(title)
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data['title'], data['index_url'], data['has_books'], data['skip_first'])
 
     def __init__(self, title, index_url, has_books, skip_first):
         self.title = title
