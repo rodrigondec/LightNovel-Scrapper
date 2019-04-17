@@ -82,7 +82,41 @@ class Novel:
                     book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
 
                 self.books.append(book)
-                print("Book {} done!".format(book))
+                logging.info("Book {} done!".format(book))
+        else:
+            accordion = self.index_soup.find('div', attrs={'id': 'accordion'})
+            panels = accordion.find_all('div', attrs={'class': 'panel'})
+
+            assert len(panels) == 1
+
+            panel = panels[0]
+
+            links = panel.find('div', attrs={'class': 'panel-body'}).find_all('a')
+
+            qt_chapter_per_book = 150
+            qt_books = ceil(len(links)/qt_chapter_per_book)
+
+            for index in range(0, qt_books):
+                book_number = index+1
+                book = Book()
+                book.number = book_number
+
+                book.number = str(book.number)
+                if book.number not in self.chosen_books:
+                    continue
+
+                book.title = f"{self.title} - book {book.number}"
+
+                initial_index = index*qt_chapter_per_book
+                final_index = initial_index + qt_chapter_per_book
+                if final_index > len(links):
+                    final_index = len(links)-1
+
+                for link in links[initial_index:final_index]:
+                    book.add_chapter(Chapter(url=link.get('href'), title=link.get_text().strip()))
+
+                self.books.append(book)
+                logging.info("Book {} done!".format(book))
 
     def process(self):
         logging.info("Processing...")
