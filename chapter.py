@@ -25,7 +25,7 @@ class Chapter:
         logging.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        ps = self.chapter_soup.find('div', attrs={'class': 'content'}).find_all('p')
+        ps = self.chapter_soup.find('div', attrs={'class': 'panel panel-default'}).find_all('p')
 
         for p in ps:
             self.paragraphs.append(f"<p>{p.get_text()}</p>")
