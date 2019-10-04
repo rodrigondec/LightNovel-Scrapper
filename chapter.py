@@ -27,6 +27,9 @@ class Chapter:
 
         ps = self.chapter_soup.find('div', attrs={'class': 'panel panel-default'}).find_all('p')
 
+        if not ps:
+            ps = self.chapter_soup.find('div', attrs={'class': 'panel panel-default'}).find_all('div')
+
         for p in ps:
             self.paragraphs.append(f"<p>{p.get_text()}</p>")
 
