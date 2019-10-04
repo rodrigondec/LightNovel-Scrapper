@@ -25,13 +25,15 @@ class Chapter:
         logging.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        ps = self.chapter_soup.find('div', attrs={'class': 'panel panel-default'}).find_all('p')
+        chapter_content = self.chapter_soup.find('div', attrs={'id': 'chapter-content'})
+        ps = chapter_content.find_all('p')
 
-        if not ps:
-            ps = self.chapter_soup.find('div', attrs={'class': 'panel panel-default'}).find_all('div')
+        if len(ps) <= 10:
+            ps = chapter_content.find_all('div')
 
         for p in ps:
-            self.paragraphs.append(f"<p>{p.get_text()}</p>")
+            if p.get_text():
+                self.paragraphs.append(f"<p>{p.get_text()}</p>")
 
     def build_chapter(self):
         self.paragraphs[0] = f"<h2>{self.title}</h2>"
