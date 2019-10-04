@@ -102,34 +102,7 @@ class Novel:
             logging.info(f"Processing book {book}...")
             book.process()
             logging.info(f"Book {book} processed!")
-
-        self.build_epubs()
-
-    def build_epubs(self):
-        logging.info("Building epubs...")
-        for book in self.books:
-            book_epub = epub.EpubBook()
-            book_epub.set_title(f"{self.title} - {book.title}")
-            book_epub.set_identifier(uuid.uuid4().hex)
-            book_epub.set_language('en')
-
-            chapters_epub = book.build_chapters(book_epub)
-
-            book_epub.add_item(epub.EpubNcx())
-            book_epub.add_item(epub.EpubNav())
-            book_epub.spine = ['Nav'] + chapters_epub
-
-            st = 'p { margin-top: 1em; text-indent: 0em; } ' \
-                 'h1 {margin-top: 1em; text-align: center} ' \
-                 'h2 {margin: 2em 0 1em; text-align: center; font-size: 2.5em;} ' \
-                 'h3 {margin: 0 0 2em; font-weight: normal; text-align:center; font-size: 1.5em; font-style: italic;} ' \
-                 '.center { text-align: center; } ' \
-                 '.pagebreak { page-break-before: always; } '
-            nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=st)
-            book_epub.add_item(nav_css)
-
-            epub.write_epub(f'{book_epub.title}.epub', book_epub, {})
-            logging.info(f"Epub for book {book} done!")
+            book.build_epub(self.title)
 
 
 class NovelBookLess(Novel):
