@@ -4,6 +4,8 @@
     {"title": "Battle Through the Heavens", "index_url": "/novel/battle-through-the-heavens",
         "has_books": false, "skip_first": false},
     {"title": "I Reincarnated For Nothing", "index_url": "/novel/i-reincarnated-for-nothing",
-        "has_books": false, "skip_first": false}
+        "has_books": false, "skip_first": false},
+    {"title": "Stop Friendly Fire", "index_url": "/novel/stop-friendly-fire",
+        "has_books": true, "skip_first": false}
 
 ]
