@@ -15,5 +15,5 @@ class MofumoChapter(Chapter):
         ps = chapter_content.find_all('p')
 
         for p in ps:
-            if p.get_text():
+            if p.get_text().strip():
                 self.paragraphs.append(f"<p>{p.get_text()}</p>")
