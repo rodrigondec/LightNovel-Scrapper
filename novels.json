@@ -1,11 +1,42 @@
 [
-    {"title": "Coiling Dragon", "index_url": "/novel/coiling-dragon", "has_books": true, "skip_first": true},
-    {"title": "Archfiend", "index_url": "/novel/archfiend", "has_books": true, "skip_first": false},
-    {"title": "Battle Through the Heavens", "index_url": "/novel/battle-through-the-heavens",
-        "has_books": false, "skip_first": false},
-    {"title": "I Reincarnated For Nothing", "index_url": "/novel/i-reincarnated-for-nothing",
-        "has_books": false, "skip_first": false},
-    {"title": "Stop Friendly Fire", "index_url": "/novel/stop-friendly-fire",
-        "has_books": true, "skip_first": false}
-
+    {
+        "type": "wuxiaworld",
+        "has_books": true,
+        "title": "Coiling Dragon",
+        "index_url": "http://www.wuxiaworld.com/novel/coiling-dragon",
+        "skip_first": true
+    },
+    {
+        "type": "wuxiaworld",
+        "has_books": true,
+        "title": "Archfiend",
+        "index_url": "http://www.wuxiaworld.com/novel/archfiend",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "has_books": false,
+        "title": "Battle Through the Heavens",
+        "index_url": "http://www.wuxiaworld.com/novel/battle-through-the-heavens",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "has_books": false,
+        "title": "I Reincarnated For Nothing",
+        "index_url": "http://www.wuxiaworld.com/novel/i-reincarnated-for-nothing",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "has_books": true,
+        "title": "Stop Friendly Fire",
+        "index_url": "http://www.wuxiaworld.com/novel/stop-friendly-fire",
+        "skip_first": false
+    },
+    {
+        "type": "mofumo",
+        "title": "Assassins Pride",
+        "index_url": "https://mofumofutranslationblog.wordpress.com/assassins-pride/"
+    }
 ]
