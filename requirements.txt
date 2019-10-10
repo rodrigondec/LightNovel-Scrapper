@@ -2,7 +2,7 @@ beautifulsoup4==4.8.1
 certifi==2019.9.11
 chardet==3.0.4
 EbookLib==0.17.1
-idna==2.6
+idna==2.8
 lxml==4.2.0
 requests==2.18.4
 six==1.11.0
