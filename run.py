@@ -1,8 +1,10 @@
 from novel.base import Novel
 from novel.wuxiaworld import WuxiaWorldNovel, WuxiaWorldNovelVolumeLess
+from novel.mofumo import MofumoNovel
 
 if __name__ == '__main__':
-    title = "Stop Friendly Fire"
+    title = "Assassins Pride"
+
     data = Novel.get_novel_data(title)
     if data.get('type') == 'wuxiaworld':
         if data.get('has_books'):
@@ -10,7 +12,7 @@ if __name__ == '__main__':
         else:
             novel = WuxiaWorldNovelVolumeLess.from_data(data)
     elif data.get('type') == 'mofumo':
-        novel = None
+        novel = MofumoNovel.from_data(data)
     else:
         raise Exception("Tipo não identificado")
 
