@@ -17,9 +17,14 @@ class Novel(abc.ABC):
             return json.load(file)
 
     @classmethod
-    def get_novel_data(cls, title):
+    def get_novel_data(cls, value, slug=True):
         for novel_data in cls.get_novels_data():
-            if title == novel_data.get('title'):
+            if slug:
+                novel_value = novel_data.get('slug')
+            else:
+                novel_value = novel_data.get('title')
+
+            if value == novel_value:
                 return novel_data
         return None
 
@@ -36,9 +41,8 @@ class Novel(abc.ABC):
         return f"Novel {self.title}"
 
     @classmethod
-    @abc.abstractmethod
     def from_data(cls, data):
-        raise Exception('Não pode ser chamado diretamente de Novel')
+        return cls(data.get('title'), data.get('index_url'))
 
     def _is_volume_chosen(self, volume_number):
         if volume_number in self.chosen_volumes:

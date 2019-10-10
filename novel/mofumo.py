@@ -12,10 +12,6 @@ logging.basicConfig(level=logging.INFO)
 
 class MofumoNovel(Novel):
 
-    @classmethod
-    def from_data(cls, data):
-        return cls(data.get('title'), data.get('index_url'))
-
     def load_volumes(self):
         logging.info("Loading volumes...")
 
