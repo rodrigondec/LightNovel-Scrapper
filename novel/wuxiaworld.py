@@ -21,9 +21,6 @@ class WuxiaWorldNovel(Novel):
 
         super(WuxiaWorldNovel, self).__init__(title, index_url)
 
-    def __str__(self):
-        return f"Novel {self.title}"
-
     def load_volumes(self):
         logging.info("Loading volumes...")
 
