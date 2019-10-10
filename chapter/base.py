@@ -1,12 +1,15 @@
+import abc
 import logging
+
 from bs4 import BeautifulSoup
+
 from utils import request_page
 
 
 logging.basicConfig(level=logging.INFO)
 
 
-class Chapter:
+class Chapter(abc.ABC):
     def __init__(self, url=None, title=None):
         self.title = title
         self.url = url
@@ -21,19 +24,9 @@ class Chapter:
         page = request_page(self.url)
         self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
 
+    @abc.abstractmethod
     def process(self):
-        logging.info(f"Processing paragraphs for chapter {self}...")
-        self.load_soup()
-
-        chapter_content = self.chapter_soup.find('div', attrs={'id': 'chapter-content'})
-        ps = chapter_content.find_all('p')
-
-        if len(ps) <= 10:
-            ps = chapter_content.find_all('div')
-
-        for p in ps:
-            if p.get_text():
-                self.paragraphs.append(f"<p>{p.get_text()}</p>")
+        raise Exception('Não pode ser chamado diretamente de Chapter')
 
     def build_chapter(self):
         self.paragraphs[0] = f"<h2>{self.title}</h2>"

@@ -1,12 +1,13 @@
-import logging
-from ebooklib import epub
 import uuid
+import logging
+
+from ebooklib import epub
 
 
 logging.basicConfig(level=logging.INFO)
 
 
-class Book:
+class Volume:
     def __init__(self, title=None, number=None):
         self.number = number
         self.title = title
@@ -26,7 +27,7 @@ class Book:
             chapter.process()
             logging.info(f"Chapter {chapter} done!")
 
-    def build_chapters(self, book_epub):
+    def build_chapters(self, volume_epub):
         logging.info("Building chapters epub...")
         chapters_epub = []
         for chapter in self.chapters:
@@ -36,22 +37,22 @@ class Book:
                 lang='en'
             )
             chapter_epub.content = chapter.build_chapter()
-            book_epub.add_item(chapter_epub)
-            book_epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex), )
+            volume_epub.add_item(chapter_epub)
+            volume_epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex),)
             chapters_epub.append(chapter_epub)
             logging.info(f"Epub for chapter {chapter} done!")
         return chapters_epub
 
     def build_epub(self, novel_title):
         logging.info(f"build epub for {self}...")
-        book_epub = epub.EpubBook()
-        book_epub.set_title(f"{novel_title} - {self.title}")
-        book_epub.set_identifier(uuid.uuid4().hex)
-        book_epub.set_language('en')
+        volume_epub = epub.EpubBook()
+        volume_epub.set_title(f"{novel_title} - {self.title}")
+        volume_epub.set_identifier(uuid.uuid4().hex)
+        volume_epub.set_language('en')
 
-        book_epub.add_item(epub.EpubNcx())
-        book_epub.add_item(epub.EpubNav())
-        book_epub.spine = ['Nav'] + self.build_chapters(book_epub)
+        volume_epub.add_item(epub.EpubNcx())
+        volume_epub.add_item(epub.EpubNav())
+        volume_epub.spine = ['Nav'] + self.build_chapters(volume_epub)
 
         st = 'p { margin-top: 1em; text-indent: 0em; } ' \
              'h1 {margin-top: 1em; text-align: center} ' \
@@ -60,7 +61,7 @@ class Book:
              '.center { text-align: center; } ' \
              '.pagebreak { page-break-before: always; } '
         nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=st)
-        book_epub.add_item(nav_css)
+        volume_epub.add_item(nav_css)
 
-        epub.write_epub(f'{book_epub.title}.epub', book_epub, {})
-        logging.info(f"Epub for book {self} done!")
+        epub.write_epub(f'{volume_epub.title}.epub', volume_epub, {})
+        logging.info(f"Epub for volume {self} done!")
