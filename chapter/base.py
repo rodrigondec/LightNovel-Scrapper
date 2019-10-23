@@ -29,7 +29,5 @@ class Chapter(abc.ABC):
         raise Exception('Não pode ser chamado diretamente de Chapter')
 
     def build_chapter(self):
-        self.paragraphs[0] = f"<h2>{self.title}</h2>"
-        content = ''.join(self.paragraphs)
-        self.paragraphs[0] = f"{self.title}"
-        return content
+        self.paragraphs.insert(0, f"<h2>{self.title}</h2>")
+        return ''.join(self.paragraphs)

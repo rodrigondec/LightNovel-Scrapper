@@ -17,6 +17,7 @@ class WuxiaChapter(Chapter):
         if len(ps) <= 10:
             ps = chapter_content.find_all('div')
 
+        ps = [p for p in ps if p.get_text().strip()]
+
         for p in ps:
-            if p.get_text().strip():
-                self.paragraphs.append(f"<p>{p.get_text()}</p>")
+            self.paragraphs.append(f"<p>{p.get_text()}</p>")

@@ -19,8 +19,9 @@ class WanderingChapter(Chapter):
         for i in range(0, len(elements)):
             if elements[i].name == 'hr':
                 elements = elements[i+1:]
+                elements = [tag for tag in elements if tag.name == 'p' and tag.get_text().strip()]
                 break
 
         for element in elements:
-            if element.get_text().strip():
-                self.paragraphs.append(f"<p>{element.get_text()}</p>")
+            text = element.get_text().replace('「', '\"').replace('」', '\"')
+            self.paragraphs.append(f"<p>{text}</p>")
