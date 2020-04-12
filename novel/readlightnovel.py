@@ -1,11 +1,9 @@
 import logging
 import re
 
-import bs4
-
 from novel.base import Novel
 from volume.base import Volume
-# from chapter.mofumo import MofumoChapter
+from chapter.readlightnovel import ReadLightNovelChapter
 
 logging.basicConfig(level=logging.INFO)
 
@@ -16,40 +14,30 @@ class ReadLightNovelNovel(Novel):
     def load_volumes(self):
         logging.info("Loading volumes...")
 
-        content = self.index_soup.find('div', attrs={'class', 'entry-content'})
+        accordion = self.index_soup.find(id='accordion')
+        panels = accordion.find_all('div', attrs={'class', 'panel'})
 
-        h3s = content.find_all('h3')
+        for panel in panels:
+            heading_one = panel.find(id='headingOne')
 
-        titles = []
-        for h3 in h3s:
-            if (re.search(r"Volume", h3.get_text()) or
-                    re.search(r"volume", h3.get_text()) or
-                    re.search(r"\d+", h3.get_text())):
-                titles.append(h3)
-
-        for title in titles:
-            assert isinstance(title, bs4.Tag)
             volume = Volume()
-            volume.title = title.get_text()
-            volume.number = re.search(r"\d+", volume.title).group()
+            volume.title = heading_one.get_text()
+            try:
+                volume.number = re.search(r"\d+", volume.title).group()
+            except AttributeError:
+                volume.number = 0
 
-            if not self._is_volume_chosen(volume.number):
-                continue
+            tab_content = panel.find('div', attrs={'class', 'tab-content'})
 
-            actual_div = title.find_next_sibling()
-            assert isinstance(actual_div, bs4.Tag)
-            while actual_div.find_next_sibling() and actual_div.find_next_sibling().name != 'h3':
-                children = actual_div.next
-                assert isinstance(children, bs4.Tag)
-                if children.name == 'a':
-                    volume.add_chapter(
-                        MofumoChapter(
-                            url=children.get('href'),
-                            title=children.get_text().strip()
-                        )
+            chapters_link = tab_content.find_all('a')
+
+            for link in chapters_link:
+                volume.add_chapter(
+                    ReadLightNovelChapter(
+                        url=link.get('href'),
+                        title=link.get_text().strip()
                     )
-
-                actual_div = actual_div.find_next_sibling()
+                )
 
             self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")
