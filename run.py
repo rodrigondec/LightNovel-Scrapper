@@ -2,7 +2,7 @@ from json_parser import get_novel_data, get_novel_class_from_type
 
 
 if __name__ == '__main__':
-    slug = "stop_friendly_fire"
+    slug = "a_returners_magic_should_be_special"
 
     novel_data = get_novel_data(slug)
     novel_class = get_novel_class_from_type(novel_data.get('type'))
