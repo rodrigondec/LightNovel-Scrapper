@@ -4,6 +4,6 @@ chardet==3.0.4
 EbookLib==0.17.1
 idna==2.8
 lxml==4.4.1
-requests==2.22.0
+requests==2.23.0
 six==1.14.0
 urllib3==1.25.6
