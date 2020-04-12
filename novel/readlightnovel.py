@@ -5,13 +5,13 @@ import bs4
 
 from novel.base import Novel
 from volume.base import Volume
-from chapter.mofumo import MofumoChapter
+# from chapter.mofumo import MofumoChapter
 
 logging.basicConfig(level=logging.INFO)
 
 
-class MofumoNovel(Novel):
-    TYPE = 'mofumo'
+class ReadLightNovelNovel(Novel):
+    TYPE = 'readlightnovel'
 
     def load_volumes(self):
         logging.info("Loading volumes...")

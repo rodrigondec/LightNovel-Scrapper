@@ -1,25 +1,14 @@
-from novel.base import Novel
-from novel.wuxiaworld import WuxiaWorldNovel, WuxiaWorldNovelVolumeLess
-from novel.mofumo import MofumoNovel
-from novel.wandering import WanderingNovel
+from json_parser import get_novel_data, get_novel_class_from_type
+
 
 if __name__ == '__main__':
-    slug = "my_status_as_an_assassin"
+    slug = "stop_friendly_fire"
 
-    data = Novel.get_novel_data(slug)
-    if data.get('type') == 'wuxiaworld':
-        if data.get('has_books'):
-            novel = WuxiaWorldNovel.from_data(data)
-        else:
-            novel = WuxiaWorldNovelVolumeLess.from_data(data)
-    elif data.get('type') == 'mofumo':
-        novel = MofumoNovel.from_data(data)
-    elif data.get('type') == 'wanderingmuse':
-        novel = WanderingNovel.from_data(data)
-    else:
-        raise Exception("Tipo não identificado")
+    novel_data = get_novel_data(slug)
+    novel_class = get_novel_class_from_type(novel_data.get('type'))
 
-    assert isinstance(novel, Novel)
+    novel = novel_class.from_data(novel_data)
+
     first_volume = 1
     last_volume = 1
     for i in range(first_volume, last_volume+1):

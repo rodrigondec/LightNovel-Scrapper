@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 class WuxiaWorldNovel(Novel):
+    TYPE = 'wuxiaworld'
 
     BASE_URL = 'http://www.wuxiaworld.com'
 
@@ -56,6 +57,8 @@ class WuxiaWorldNovel(Novel):
 
 
 class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
+    TYPE = 'wuxiaworld_volumeless'
+
     def load_volumes(self):
         logging.info("Loading volumes...")
 

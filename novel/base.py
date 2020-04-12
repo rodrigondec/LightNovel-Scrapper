@@ -1,7 +1,6 @@
 import abc
 
 import logging
-import json
 from bs4 import BeautifulSoup
 from utils import request_page
 
@@ -9,25 +8,6 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Novel(abc.ABC):
-
-    @classmethod
-    def get_novels_data(cls):
-        logging.info('Loading novels...')
-        with open("novels.json", 'r') as file:
-            return json.load(file)
-
-    @classmethod
-    def get_novel_data(cls, value, slug=True):
-        for novel_data in cls.get_novels_data():
-            if slug:
-                novel_value = novel_data.get('slug')
-            else:
-                novel_value = novel_data.get('title')
-
-            if value == novel_value:
-                return novel_data
-        return None
-
     def __init__(self, title, index_url):
         self.title = title
         self.index_url = index_url

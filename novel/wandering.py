@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 class WanderingNovel(Novel):
+    TYPE = 'wanderingmuse'
 
     def load_volumes(self):
         logging.info("Loading volumes...")
