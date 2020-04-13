@@ -1,10 +1,13 @@
+import os
 import abc
 
 import logging
 from bs4 import BeautifulSoup
-from utils import request_page
+from utils import request_page, get_cache_path
+
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Novel(abc.ABC):
@@ -32,25 +35,39 @@ class Novel(abc.ABC):
         return False
 
     def load_soup(self):
-        logging.info("Loading index soup...")
+        logger.info("Loading index soup...")
         page = request_page(self.index_url)
         self.index_soup = BeautifulSoup(page.content, 'html.parser')
 
     def add_chosen_volume(self, volume_number):
-        logging.info(f"volume {volume_number} added to queue!")
+        logger.info(f"volume {volume_number} added to queue!")
         self.chosen_volumes.append(volume_number)
+
+    def add_volume(self, volume):
+        logger.info(f"Volume {volume} added to {self}!")
+        self.volumes.append(volume)
+        volume.novel = self
 
     @abc.abstractmethod
     def load_volumes(self):
         raise Exception('Não pode ser chamado diretamente de Novel')
 
     def process(self):
-        logging.info("Processing...")
+        logger.info("Processing...")
         self.load_soup()
         self.load_volumes()
 
         for volume in self.volumes:
-            logging.info(f"Processing volume {volume}...")
+            logger.info(f"Processing volume {volume}...")
             volume.process()
-            logging.info(f"volume {volume} processed!")
-            volume.build_epub(self.title)
+            logger.info(f"volume {volume} processed!")
+            volume.build_epub()
+
+    def get_cache_path(self):
+        cache_path = get_cache_path()
+        cache_path = os.path.join(cache_path, self.slug)
+        try:
+            os.mkdir(cache_path)
+        except FileExistsError:
+            pass
+        return cache_path

@@ -21,6 +21,7 @@ class WanderingNovel(Novel):
         ps = content.find_all('p')
         volume = Volume()
         volume.number = 1
+        self.add_volume(volume)
 
         for p in ps:
             children = p.next
@@ -35,5 +36,4 @@ class WanderingNovel(Novel):
                 )
 
         volume.title = f'{volume.chapters[0].title} - {volume.chapters[-1].title}'
-        self.volumes.append(volume)
         logging.info(f"Volume {volume} done!")

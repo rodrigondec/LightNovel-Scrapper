@@ -13,14 +13,10 @@ class WuxiaWorldNovel(Novel):
 
     BASE_URL = 'http://www.wuxiaworld.com'
 
-    @classmethod
-    def from_data(cls, data):
-        return cls(data.get('title'), data.get('index_url'), data.get('skip_first'))
-
-    def __init__(self, title, index_url, skip_first):
+    def __init__(self, skip_first, **kwargs):
         self.skip_first = skip_first
 
-        super(WuxiaWorldNovel, self).__init__(title, index_url)
+        super().__init__(**kwargs)
 
     def load_volumes(self):
         logging.info("Loading volumes...")
@@ -31,6 +27,7 @@ class WuxiaWorldNovel(Novel):
         for panel in panels:
             volume = Volume()
             volume.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
+            self.add_volume(volume)
 
             if self.skip_first:
                 volume.number -= 1
@@ -52,7 +49,6 @@ class WuxiaWorldNovel(Novel):
                     )
                 )
 
-            self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")
 
 
@@ -84,9 +80,8 @@ class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
         for index in range(0, qt_books):
             volume_number = index + 1
             volume = Volume()
-            volume.number = volume_number
-
-            volume.number = str(volume.number)
+            volume.number = str(volume_number)
+            self.add_volume(volume)
 
             if not self._is_volume_chosen(volume.number):
                 continue
@@ -101,5 +96,4 @@ class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
             for link in links[initial_index:final_index]:
                 volume.add_chapter(WuxiaChapter(url=link.get('href'), title=link.get_text().strip()))
 
-            self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")

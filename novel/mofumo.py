@@ -32,6 +32,7 @@ class MofumoNovel(Novel):
             volume = Volume()
             volume.title = title.get_text()
             volume.number = re.search(r"\d+", volume.title).group()
+            self.add_volume(volume)
 
             if not self._is_volume_chosen(volume.number):
                 continue
@@ -51,5 +52,4 @@ class MofumoNovel(Novel):
 
                 actual_div = actual_div.find_next_sibling()
 
-            self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")

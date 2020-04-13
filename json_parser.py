@@ -2,18 +2,19 @@ import json
 import logging
 
 from novel.mofumo import MofumoNovel
-from novel.readlightnovel import ReadLightNovelNovel
+from novel.novelspl import NovelsPLNovel
 from novel.wandering import WanderingNovel
 from novel.wuxiaworld import WuxiaWorldNovel, WuxiaWorldNovelVolumeLess
 
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-TYPE_CLASSES = [MofumoNovel, ReadLightNovelNovel, WanderingNovel,
+TYPE_CLASSES = [MofumoNovel, NovelsPLNovel, WanderingNovel,
                 WuxiaWorldNovel, WuxiaWorldNovelVolumeLess]
 TYPE_DICT = {
     MofumoNovel.TYPE: MofumoNovel,
-    ReadLightNovelNovel.TYPE: ReadLightNovelNovel,
+    NovelsPLNovel.TYPE: NovelsPLNovel,
     WanderingNovel.TYPE: WanderingNovel,
     WuxiaWorldNovel.TYPE: WuxiaWorldNovel,
     WuxiaWorldNovelVolumeLess.TYPE: WuxiaWorldNovelVolumeLess
@@ -27,7 +28,7 @@ def get_novel_class_from_type(type):
 
 
 def _get_novels_data():
-    logging.info('Loading novels...')
+    logger.info('Loading novels...')
     with open("novels.json", 'r') as file:
         return json.load(file)
 
