@@ -1,3 +1,4 @@
 beautifulsoup4==4.9
 EbookLib==0.17
 requests==2.23
+nerodia==0.14

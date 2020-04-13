@@ -5,6 +5,7 @@ from ebooklib import epub
 
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Volume:
@@ -17,18 +18,18 @@ class Volume:
         return self.title
 
     def add_chapter(self, chapter):
-        logging.info(f"Chapter {chapter} added to queue!")
+        logger.info(f"Chapter {chapter} added to queue!")
         self.chapters.append(chapter)
 
     def process(self):
-        logging.info("Processing chapters...")
+        logger.info("Processing chapters...")
         for chapter in self.chapters:
-            logging.info(f"Processing chapter {chapter}...")
+            logger.info(f"Processing chapter {chapter}...")
             chapter.process()
-            logging.info(f"Chapter {chapter} done!")
+            logger.info(f"Chapter {chapter} done!")
 
     def build_chapters(self, volume_epub):
-        logging.info("Building chapters epub...")
+        logger.info("Building chapters epub...")
         chapters_epub = []
         for chapter in self.chapters:
             chapter_epub = epub.EpubHtml(
@@ -40,11 +41,11 @@ class Volume:
             volume_epub.add_item(chapter_epub)
             volume_epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex),)
             chapters_epub.append(chapter_epub)
-            logging.info(f"Epub for chapter {chapter} done!")
+            logger.info(f"Epub for chapter {chapter} done!")
         return chapters_epub
 
     def build_epub(self, novel_title):
-        logging.info(f"build epub for {self}...")
+        logger.info(f"build epub for {self}...")
         volume_epub = epub.EpubBook()
         volume_epub.set_title(f"{novel_title} - {self.title}")
         volume_epub.set_identifier(uuid.uuid4().hex)
@@ -64,4 +65,4 @@ class Volume:
         volume_epub.add_item(nav_css)
 
         epub.write_epub(f'{volume_epub.title}.epub', volume_epub, {})
-        logging.info(f"Epub for volume {self} done!")
+        logger.info(f"Epub for volume {self} done!")

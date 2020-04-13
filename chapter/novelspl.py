@@ -4,21 +4,22 @@ from chapter.base import Chapter
 
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-class ReadLightNovelChapter(Chapter):
+class NovelsPLChapter(Chapter):
     def process(self):
         self.pre_process()
 
         if self.paragraphs:
-            logging.info(f"Found cache! skipping for chapter {self}...")
+            logger.info(f"Found cache! skipping for chapter {self}...")
             return
 
-        logging.info(f"Processing paragraphs for chapter {self}...")
+        logger.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        chapter_content = self.chapter_soup.find('div', attrs={'class': 'chapter-content3'})
-        ps = chapter_content.find_all('strong')
+        chapter_content = self.chapter_soup.find('div', attrs={'class': 'article'})
+        ps = chapter_content.find_all('p')
 
         ps = [p for p in ps if p.get_text().strip()]
 
