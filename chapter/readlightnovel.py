@@ -18,7 +18,7 @@ class ReadLightNovelChapter(Chapter):
         self.load_soup()
 
         chapter_content = self.chapter_soup.find('div', attrs={'class': 'chapter-content3'})
-        ps = chapter_content.find_all('p')
+        ps = chapter_content.find_all('strong')
 
         ps = [p for p in ps if p.get_text().strip()]
 
