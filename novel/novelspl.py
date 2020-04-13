@@ -28,28 +28,14 @@ class NovelsPLNovel(Novel):
         browser.li({'class': 'last'}).js_click()
 
         logger.info(f"Getting chapters tbody...")
-        chapters = browser.tbody({'id': 'chapters'})
-        chapters.wait_for_present()
-
-        logger.info(f"Getting all links from chapters...")
-        links = chapters.links()
-
-        logger.info(f"Generating my list links...")
-        chapter_links = []
-        for link in list(links):
-            logger.info(f"Generating link for {link}...")
-            chapter_links.append({
+        chapter_links = [
+            {
                 'href': link.href,
                 'text': link.text
-            })
-        # chapter_links = [
-        #     {
-        #         'href': link.href,
-        #         'text': link.text
-        #     }
-        #     for link in
-        #     list(a)
-        # ]
+            }
+            for link in
+            browser.tbody({'id': 'chapters'}).links()
+        ]
 
         logger.info(f"Closing browser...")
         browser.close()
