@@ -27,6 +27,7 @@ class WuxiaWorldNovel(Novel):
         for panel in panels:
             volume = Volume()
             volume.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
+            self.add_volume(volume)
 
             if self.skip_first:
                 volume.number -= 1
@@ -48,7 +49,6 @@ class WuxiaWorldNovel(Novel):
                     )
                 )
 
-            self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")
 
 
@@ -80,9 +80,8 @@ class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
         for index in range(0, qt_books):
             volume_number = index + 1
             volume = Volume()
-            volume.number = volume_number
-
-            volume.number = str(volume.number)
+            volume.number = str(volume_number)
+            self.add_volume(volume)
 
             if not self._is_volume_chosen(volume.number):
                 continue
@@ -97,5 +96,4 @@ class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
             for link in links[initial_index:final_index]:
                 volume.add_chapter(WuxiaChapter(url=link.get('href'), title=link.get_text().strip()))
 
-            self.volumes.append(volume)
             logging.info(f"Volume {volume} done!")

@@ -24,6 +24,7 @@ class Volume:
     def add_chapter(self, chapter):
         logger.info(f"Chapter {chapter} added to queue!")
         self.chapters.append(chapter)
+        chapter.novel = self.novel
 
     def process(self):
         logger.info("Processing chapters...")

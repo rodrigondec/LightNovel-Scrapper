@@ -26,14 +26,13 @@ class NovelsPLNovel(Novel):
 
         logger.info(f"Creating volume...")
         volume = Volume(
-            novel=self,
             title='Volume único!',
             number=0
         )
+        self.add_volume(volume)
 
         first_chapter = NovelsPLChapter(
-            url=self.first_chapter_link,
-            novel=self
+            url=self.first_chapter_link
         )
         first_chapter.load_soup()
 
@@ -52,13 +51,11 @@ class NovelsPLNovel(Novel):
                 continue
 
             next_chapter = NovelsPLChapter(
-                url=f"{self.BASE_URL}{next_link}",
-                novel=self
+                url=f"{self.BASE_URL}{next_link}"
             )
             next_chapter.load_soup()
             current_chapter = next_chapter
 
-        self.volumes.append(volume)
         logger.info(f"Volume {volume} done!")
 
 

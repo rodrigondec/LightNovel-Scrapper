@@ -43,6 +43,11 @@ class Novel(abc.ABC):
         logger.info(f"volume {volume_number} added to queue!")
         self.chosen_volumes.append(volume_number)
 
+    def add_volume(self, volume):
+        logger.info(f"Volume {volume} added to {self}!")
+        self.volumes.append(volume)
+        volume.novel = self
+
     @abc.abstractmethod
     def load_volumes(self):
         raise Exception('Não pode ser chamado diretamente de Novel')
