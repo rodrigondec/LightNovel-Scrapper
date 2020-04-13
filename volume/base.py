@@ -1,3 +1,4 @@
+import os
 import uuid
 import logging
 
@@ -9,10 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 class Volume:
-    def __init__(self, title=None, number=None):
+    def __init__(self, title=None, number=None, novel=None):
         self.number = number
         self.title = title
+
+        self.novel = novel
         self.chapters = []
+        self.epub = None
 
     def __str__(self):
         return self.title
@@ -28,7 +32,7 @@ class Volume:
             chapter.process()
             logger.info(f"Chapter {chapter} done!")
 
-    def build_chapters(self, volume_epub):
+    def build_chapters(self):
         logger.info("Building chapters epub...")
         chapters_epub = []
         for chapter in self.chapters:
@@ -38,22 +42,22 @@ class Volume:
                 lang='en'
             )
             chapter_epub.content = chapter.build_chapter()
-            volume_epub.add_item(chapter_epub)
-            volume_epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex),)
+            self.epub.add_item(chapter_epub)
+            self.epub.toc += (epub.Link(chapter_epub.file_name, chapter_epub.title, uuid.uuid4().hex),)
             chapters_epub.append(chapter_epub)
             logger.info(f"Epub for chapter {chapter} done!")
         return chapters_epub
 
-    def build_epub(self, novel_title):
+    def build_epub(self):
         logger.info(f"build epub for {self}...")
-        volume_epub = epub.EpubBook()
-        volume_epub.set_title(f"{novel_title} - {self.title}")
-        volume_epub.set_identifier(uuid.uuid4().hex)
-        volume_epub.set_language('en')
+        self.epub = epub.EpubBook()
+        self.epub.set_title(f"{self.novel.title} - {self.title}")
+        self.epub.set_identifier(uuid.uuid4().hex)
+        self.epub.set_language('en')
 
-        volume_epub.add_item(epub.EpubNcx())
-        volume_epub.add_item(epub.EpubNav())
-        volume_epub.spine = ['Nav'] + self.build_chapters(volume_epub)
+        self.epub.add_item(epub.EpubNcx())
+        self.epub.add_item(epub.EpubNav())
+        self.epub.spine = ['Nav'] + self.build_chapters()
 
         st = 'p { margin-top: 1em; text-indent: 0em; } ' \
              'h1 {margin-top: 1em; text-align: center} ' \
@@ -62,7 +66,10 @@ class Volume:
              '.center { text-align: center; } ' \
              '.pagebreak { page-break-before: always; } '
         nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=st)
-        volume_epub.add_item(nav_css)
+        self.epub.add_item(nav_css)
 
-        epub.write_epub(f'{volume_epub.title}.epub', volume_epub, {})
+        novel_cache_path = self.novel.get_cache_path()
+        epub_file_path = os.path.join(novel_cache_path, f'{self.epub.title}.epub')
+
+        epub.write_epub(epub_file_path, self.epub, {})
         logger.info(f"Epub for volume {self} done!")

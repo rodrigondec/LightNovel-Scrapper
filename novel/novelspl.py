@@ -25,9 +25,11 @@ class NovelsPLNovel(Novel):
         logger.info("Loading volumes...")
 
         logger.info(f"Creating volume...")
-        volume = Volume()
-        volume.title = self.title
-        volume.number = 0
+        volume = Volume(
+            novel=self,
+            title='Volume único!',
+            number=0
+        )
 
         first_chapter = NovelsPLChapter(
             url=self.first_chapter_link,

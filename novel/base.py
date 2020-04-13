@@ -1,8 +1,9 @@
+import os
 import abc
 
 import logging
 from bs4 import BeautifulSoup
-from utils import request_page
+from utils import request_page, get_cache_path
 
 
 logging.basicConfig(level=logging.INFO)
@@ -56,3 +57,12 @@ class Novel(abc.ABC):
             volume.process()
             logger.info(f"volume {volume} processed!")
             volume.build_epub(self.title)
+
+    def get_cache_path(self):
+        cache_path = get_cache_path()
+        cache_path = os.path.join(cache_path, self.slug)
+        try:
+            os.mkdir(cache_path)
+        except FileExistsError:
+            pass
+        return cache_path

@@ -42,22 +42,20 @@ class Chapter(abc.ABC):
         raise Exception('Não pode ser chamado diretamente de Chapter')
 
     def post_process(self):
-        try:
-            with open(self.get_cache_file_path(), 'w') as file:
-                json.dump(self.paragraphs, file, indent=4)
-        except FileNotFoundError as e:
-            os.mkdir(self.get_cache_path())
-            self.post_process()
+        # try:
+        with open(self.get_cache_file_path(), 'w') as file:
+            json.dump(self.paragraphs, file, indent=4)
+        # except FileNotFoundError:
+        #     os.mkdir(self.get_chapter_cache_path())
+        #     self.post_process()
 
     def build_chapter(self):
         self.paragraphs.insert(0, f"<h2>{self.title}</h2>")
         return ''.join(self.paragraphs)
 
     def get_cache_path(self):
-        current_path = os.path.dirname(os.path.realpath(__file__))
-        cache_path = os.path.join(current_path, "cache")
-        if self.novel:
-            cache_path = os.path.join(cache_path, self.novel.slug)
+        cache_path = self.novel.get_cache_path()
+        cache_path = os.path.join(cache_path, 'chapters')
         try:
             os.mkdir(cache_path)
         except FileExistsError:
