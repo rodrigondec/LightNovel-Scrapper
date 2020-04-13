@@ -21,7 +21,13 @@ class NovelsPLChapter(Chapter):
         chapter_content = self.chapter_soup.find('div', attrs={'class': 'article'})
         ps = chapter_content.find_all('p')
 
-        ps = [p for p in ps if p.get_text().strip()]
+        ignored_ps = [
+            'This chapter is updated by Novels.pl',
+            'Click here and join our YouTube Channel',
+            'Liked it? Take a second to support Novels on Patreon!'
+        ]
+
+        ps = [p for p in ps if p.get_text().strip() not in ignored_ps]
 
         for p in ps:
             self.paragraphs.append(f"<p>{p.get_text()}</p>")
