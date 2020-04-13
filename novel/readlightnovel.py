@@ -35,7 +35,8 @@ class ReadLightNovelNovel(Novel):
                 volume.add_chapter(
                     ReadLightNovelChapter(
                         url=link.get('href'),
-                        title=link.get_text().strip()
+                        title=link.get_text().strip(),
+                        novel=self
                     )
                 )
 

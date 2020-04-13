@@ -8,9 +8,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Novel(abc.ABC):
-    def __init__(self, title, index_url):
+    def __init__(self, title, index_url, slug, **kwargs):
         self.title = title
         self.index_url = index_url
+        self.slug = slug
+
         self.chosen_volumes = []
 
         self.index_soup = None
@@ -22,7 +24,7 @@ class Novel(abc.ABC):
 
     @classmethod
     def from_data(cls, data):
-        return cls(data.get('title'), data.get('index_url'))
+        return cls(**data)
 
     def _is_volume_chosen(self, volume_number):
         if volume_number in self.chosen_volumes:
