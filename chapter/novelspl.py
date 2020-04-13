@@ -24,7 +24,8 @@ class NovelsPLChapter(Chapter):
         ignored_ps = [
             'This chapter is updated by Novels.pl',
             'Click here and join our YouTube Channel',
-            'Liked it? Take a second to support Novels on Patreon!'
+            'Liked it? Take a second to support Novels on Patreon!',
+            '', ' '
         ]
 
         ps = [p for p in ps if p.get_text().strip() not in ignored_ps]

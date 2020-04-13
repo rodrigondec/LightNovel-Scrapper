@@ -56,7 +56,7 @@ class Novel(abc.ABC):
             logger.info(f"Processing volume {volume}...")
             volume.process()
             logger.info(f"volume {volume} processed!")
-            volume.build_epub(self.title)
+            volume.build_epub()
 
     def get_cache_path(self):
         cache_path = get_cache_path()
