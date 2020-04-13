@@ -13,14 +13,10 @@ class WuxiaWorldNovel(Novel):
 
     BASE_URL = 'http://www.wuxiaworld.com'
 
-    @classmethod
-    def from_data(cls, data):
-        return cls(data.get('title'), data.get('index_url'), data.get('skip_first'))
-
-    def __init__(self, title, index_url, skip_first):
+    def __init__(self, skip_first, **kwargs):
         self.skip_first = skip_first
 
-        super(WuxiaWorldNovel, self).__init__(title, index_url)
+        super().__init__(**kwargs)
 
     def load_volumes(self):
         logging.info("Loading volumes...")
