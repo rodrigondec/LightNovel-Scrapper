@@ -32,11 +32,11 @@ class NovelsPLNovel(Novel):
         chapters.wait_for_present()
 
         logger.info(f"Getting all links from chapters...")
-        a = chapters.links()
+        links = chapters.links()
 
         logger.info(f"Generating my list links...")
         chapter_links = []
-        for link in list(a):
+        for link in list(links):
             logger.info(f"Generating link for {link}...")
             chapter_links.append({
                 'href': link.href,
