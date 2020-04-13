@@ -25,8 +25,9 @@ class Chapter(abc.ABC):
         return self.title
 
     def load_soup(self):
-        page = request_page(self.url)
-        self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
+        if self.chapter_soup is None:
+            page = request_page(self.url)
+            self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
 
     def pre_process(self):
         try:

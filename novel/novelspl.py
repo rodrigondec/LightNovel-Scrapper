@@ -1,5 +1,4 @@
 import logging
-from time import sleep
 
 from nerodia.browser import Browser
 
@@ -15,49 +14,47 @@ logger = logging.getLogger(__name__)
 class NovelsPLNovel(Novel):
     TYPE = 'novelspl'
 
+    BASE_URL = 'https://www.novels.pl'
+
+    def __init__(self, first_chapter_link, **kwargs):
+        self.first_chapter_link = first_chapter_link
+
+        super().__init__(**kwargs)
+
     def load_volumes(self):
         logger.info("Loading volumes...")
-
-        logger.info(f"Opening browser...")
-        browser = Browser(browser='firefox')
-        logger.info(f"Going to url...")
-        browser.goto(self.index_url)
-
-        browser.wait()
-        logger.info(f"Click on last page...")
-        browser.li({'class': 'last'}).js_click()
-
-        logger.info(f"Getting chapters tbody...")
-        chapter_links = [
-            {
-                'href': link.href,
-                'text': link.text
-            }
-            for link in
-            browser.tbody({'id': 'chapters'}).links()
-        ]
-
-        logger.info(f"Closing browser...")
-        browser.close()
-
-        logger.info(f"Reverse list...")
-        chapter_links.reverse()
 
         logger.info(f"Creating volume...")
         volume = Volume()
         volume.title = self.title
         volume.number = 0
 
-        logger.info(f"Iterating links...")
-        for link in chapter_links:
-            logger.info(f"Creating chapter...")
-            volume.add_chapter(
-                NovelsPLChapter(
-                    url=link.get('href'),
-                    title=link.get('text'),
-                    novel=self
-                )
+        first_chapter = NovelsPLChapter(
+            url=self.first_chapter_link,
+            novel=self
+        )
+        first_chapter.load_soup()
+
+        current_chapter = first_chapter
+        while current_chapter:
+            article = current_chapter.chapter_soup.find('div', attrs={'class': 'article'})
+            h4 = article.find('h4')
+            current_chapter.title = h4.get_text().strip()
+
+            volume.add_chapter(current_chapter)
+
+            li_next = article.find('li', attrs={'class': 'next'})
+            next_link = li_next.find('a').get('href')
+            if next_link is None:
+                current_chapter = None
+                continue
+
+            next_chapter = NovelsPLChapter(
+                url=f"{self.BASE_URL}{next_link}",
+                novel=self
             )
+            next_chapter.load_soup()
+            current_chapter = next_chapter
 
         self.volumes.append(volume)
         logger.info(f"Volume {volume} done!")
