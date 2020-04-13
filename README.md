@@ -6,6 +6,7 @@ sources for this webscrapper:
 - [Wuxia World](https://www.wuxiaworld.com/)
 - [Mofumo Translations](https://mofumofutranslationblog.wordpress.com/)
 - [Wandering Muse](https://wanderingmusetranslation.wordpress.com/)
+- [Novels.pl](https://www.novels.pl/)
 
 ### Novels
 - Coiling Dragon
@@ -15,6 +16,7 @@ sources for this webscrapper:
 - Stop Friendly Fire
 - Assassins Pride
 - My Status As An Assassin Is Obviously Stronger Than That Of the Hero’s
+- A Returner’s Magic Should Be Special
 
 ## Setup
 comming soon...
