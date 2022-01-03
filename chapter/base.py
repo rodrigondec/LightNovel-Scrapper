@@ -34,8 +34,9 @@ class Chapter(abc.ABC):
             with open(self.get_cache_file_path(), 'r') as file:
                 data = json.load(file)
             self.paragraphs = data
+            return True
         except FileNotFoundError:
-            pass
+            return False
 
     @abc.abstractmethod
     def process(self):

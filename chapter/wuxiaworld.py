@@ -8,6 +8,9 @@ logging.basicConfig(level=logging.INFO)
 
 class WuxiaChapter(Chapter):
     def process(self):
+        if self.pre_process():
+            return
+
         logging.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
@@ -21,3 +24,5 @@ class WuxiaChapter(Chapter):
 
         for p in ps:
             self.paragraphs.append(f"<p>{p.get_text()}</p>")
+
+        self.post_process()

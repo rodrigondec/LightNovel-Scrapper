@@ -1,8 +1,6 @@
 import logging
 import re
 
-import bs4
-
 from novel.base import Novel
 from volume.base import Volume
 from chapter.wandering import WanderingChapter

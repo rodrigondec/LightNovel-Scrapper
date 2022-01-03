@@ -1,6 +1,20 @@
 [
     {
         "type": "wuxiaworld",
+        "slug": "the-second-coming-of-gluttony",
+        "title": "The Second Coming Of Gluttony",
+        "index_url": "http://www.wuxiaworld.com/novel/the-second-coming-of-gluttony",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld_volumeless",
+        "slug": "the-regressed-demon-lord-is-kind",
+        "title": "The Regressed Demon Lord Is Kind",
+        "index_url": "http://www.wuxiaworld.com/novel/the-regressed-demon-lord-is-kind",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
         "slug": "coiling_dragon",
         "title": "Coiling Dragon",
         "index_url": "http://www.wuxiaworld.com/novel/coiling-dragon",

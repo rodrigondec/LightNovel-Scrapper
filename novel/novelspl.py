@@ -1,7 +1,5 @@
 import logging
 
-from nerodia.browser import Browser
-
 from novel.base import Novel
 from volume.base import Volume
 from chapter.novelspl import NovelsPLChapter

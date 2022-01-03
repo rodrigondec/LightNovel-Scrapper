@@ -21,9 +21,9 @@ TYPE_DICT = {
 }
 
 
-def get_novel_class_from_type(type):
-    if type in TYPE_DICT:
-        return TYPE_DICT.get(type)
+def get_novel_class_from_type(_type):
+    if _type in TYPE_DICT:
+        return TYPE_DICT.get(_type)
     raise ValueError('type not identified')
 
 

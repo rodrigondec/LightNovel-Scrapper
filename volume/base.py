@@ -19,7 +19,7 @@ class Volume:
         self.epub = None
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def add_chapter(self, chapter):
         logger.info(f"Chapter {chapter} added to queue!")
