@@ -9,16 +9,13 @@ logger = logging.getLogger(__name__)
 
 class NovelsPLChapter(Chapter):
     def process(self):
-        self.pre_process()
-
-        if self.paragraphs:
-            logger.info(f"Found cache! skipping for chapter {self}...")
+        if self._loaded_from_cache:
             return
 
         logger.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        chapter_content = self.chapter_soup.find('div', attrs={'class': 'article'})
+        chapter_content = self._soup.find('div', attrs={'class': 'article'})
         ps = chapter_content.find_all('p')
 
         ignored_ps = [
@@ -31,6 +28,6 @@ class NovelsPLChapter(Chapter):
         ps = [p for p in ps if p.get_text().strip() not in ignored_ps]
 
         for p in ps:
-            self.paragraphs.append(f"<p>{p.get_text()}</p>")
+            self._paragraphs.append(f"<p>{p.get_text()}</p>")
 
-        self.post_process()
+        self._save_cache()

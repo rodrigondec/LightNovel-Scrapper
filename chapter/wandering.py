@@ -10,10 +10,13 @@ logging.basicConfig(level=logging.INFO)
 
 class WanderingChapter(Chapter):
     def process(self):
+        if self._loaded_from_cache:
+            return
+
         logging.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        chapter_content = self.chapter_soup.find('div', attrs={'class': 'entry-content'})
+        chapter_content = self._soup.find('div', attrs={'class': 'entry-content'})
         assert isinstance(chapter_content, bs4.Tag)
         elements = chapter_content.find_all()
         for i in range(0, len(elements)):
@@ -24,4 +27,6 @@ class WanderingChapter(Chapter):
 
         for element in elements:
             text = element.get_text().replace('「', '\"').replace('」', '\"')
-            self.paragraphs.append(f"<p>{text}</p>")
+            self._paragraphs.append(f"<p>{text}</p>")
+
+        self._save_cache()

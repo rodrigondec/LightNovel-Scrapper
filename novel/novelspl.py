@@ -36,7 +36,7 @@ class NovelsPLNovel(Novel):
 
         current_chapter = first_chapter
         while current_chapter:
-            article = current_chapter.chapter_soup.find('div', attrs={'class': 'article'})
+            article = current_chapter._soup.find('div', attrs={'class': 'article'})
             h4 = article.find('h4')
             current_chapter.title = h4.get_text().strip()
 

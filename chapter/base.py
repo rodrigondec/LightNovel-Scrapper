@@ -12,45 +12,48 @@ from utils import request_page
 logging.basicConfig(level=logging.INFO)
 
 
-class Chapter(abc.ABC):
-    def __init__(self, url=None, title=None, novel=None):
+class Chapter:
+    def __init__(self, url, title, novel):
         self.title = title
         self.url = url
 
         self.novel = novel
-        self.chapter_soup = None
-        self.paragraphs = []
+        self._soup = None
+        self._paragraphs = []
+        self._loaded_from_cache = False
+        self._load_cache()
 
     def __str__(self):
         return self.title
 
     def load_soup(self):
-        if self.chapter_soup is None:
+        if self._soup is None:
             page = request_page(self.url)
-            self.chapter_soup = BeautifulSoup(page.content, 'html.parser')
+            self._soup = BeautifulSoup(page.content, 'html.parser')
 
-    def pre_process(self):
+    def _load_cache(self):
         try:
-            with open(self.get_cache_file_path(), 'r') as file:
+            with open(self._cache_file_path, 'r') as file:
                 data = json.load(file)
-            self.paragraphs = data
+            self._paragraphs = data
+            self._loaded_from_cache = True
             return True
         except FileNotFoundError:
             return False
 
-    @abc.abstractmethod
-    def process(self):
-        raise Exception('Não pode ser chamado diretamente de Chapter')
+    def _save_cache(self):
+        with open(self._cache_file_path, 'w') as file:
+            json.dump(self._paragraphs, file, indent=4)
 
-    def post_process(self):
-        with open(self.get_cache_file_path(), 'w') as file:
-            json.dump(self.paragraphs, file, indent=4)
+    def process(self):
+        raise NotImplementedError('Implemente o processamento do capitulo!')
 
     def build_chapter(self):
-        self.paragraphs.insert(0, f"<h2>{self.title}</h2>")
-        return ''.join(self.paragraphs)
+        self._paragraphs.insert(0, f"<h2>{self.title}</h2>")
+        return ''.join(self._paragraphs)
 
-    def get_cache_path(self):
+    @property
+    def _cache_folder_path(self):
         cache_path = self.novel.get_cache_path()
         cache_path = os.path.join(cache_path, 'chapters')
         try:
@@ -59,6 +62,7 @@ class Chapter(abc.ABC):
             pass
         return cache_path
 
-    def get_cache_file_path(self):
-        cache_path = self.get_cache_path()
+    @property
+    def _cache_file_path(self):
+        cache_path = self._cache_folder_path
         return os.path.join(cache_path, f"{self.title}.json")

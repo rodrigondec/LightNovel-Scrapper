@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class Volume:
-    def __init__(self, title=None, number=None, novel=None):
+    def __init__(self, title, number, novel):
         self.number = number
         self.title = title
 

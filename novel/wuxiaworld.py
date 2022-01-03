@@ -25,8 +25,11 @@ class WuxiaWorldNovel(Novel):
         panels = accordion.find_all('div', attrs={'class': 'panel'})
 
         for panel in panels:
-            volume = Volume()
-            volume.number = int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text())
+            volume = Volume(
+                number=int(panel.find('h4').find('span', attrs={'class': 'book'}).get_text()),
+                title=panel.find('h4').find('span', attrs={'class': 'title'}).find('a').get_text().strip(),
+                novel=self
+            )
             self.add_volume(volume)
 
             if self.skip_first:
@@ -36,14 +39,13 @@ class WuxiaWorldNovel(Novel):
 
             volume.number = str(volume.number)
 
-            volume.title = panel.find('h4').find('span', attrs={'class': 'title'}).find('a').get_text().strip()
-
             links = panel.find('div', attrs={'class': 'panel-body'}).find_all('a')
             for link in links:
                 volume.add_chapter(
                     WuxiaChapter(
                         url=self.__class__.BASE_URL+link.get('href'),
-                        title=link.get_text().strip()
+                        title=link.get_text().strip(),
+                        novel=volume.novel
                     )
                 )
 
@@ -77,22 +79,24 @@ class WuxiaWorldNovelVolumeLess(WuxiaWorldNovel):
 
         for index in range(0, qt_books):
             volume_number = index + 1
-            volume = Volume()
-            volume.number = str(volume_number)
-            self.add_volume(volume)
 
             initial_index = index * qt_chapter_per_book
             final_index = initial_index + qt_chapter_per_book
             if final_index > len(links):
                 final_index = len(links) - 1
 
-            volume.title = f"book {volume.number} - {final_index - initial_index} chapters"
+            volume = Volume(
+                number=str(volume_number),
+                title=f"book {volume_number} - {final_index - initial_index} chapters",
+                novel=self
+            )
+            self.add_volume(volume)
 
             for link in links[initial_index:final_index]:
                 href = link.get('href')
                 if href[0] == '/':
                     href = f"{self.BASE_URL}{href}"
-                chapter = WuxiaChapter(url=href, title=link.get_text().strip())
+                chapter = WuxiaChapter(url=href, title=link.get_text().strip(), novel=volume.novel)
                 volume.add_chapter(chapter)
 
             logging.info(f"Volume {volume} done!")

@@ -1,5 +1,47 @@
 [
     {
+        "type": "wuxiaworld_volumeless",
+        "slug": "moons-labyrinth",
+        "title": "moons-labyrinth",
+        "index_url": "http://www.wuxiaworld.com/novel/moons-labyrinth",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "slug": "overgeared",
+        "title": "Overgeared",
+        "index_url": "http://www.wuxiaworld.com/novel/overgeared",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "slug": "a-will-eternal",
+        "title": "A Will Eternal",
+        "index_url": "http://www.wuxiaworld.com/novel/a-will-eternal",
+        "skip_first": true
+    },
+    {
+        "type": "wuxiaworld",
+        "slug": "renegade-immortal",
+        "title": "Renegade Immortal",
+        "index_url": "http://www.wuxiaworld.com/novel/renegade-immortal",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "slug": "rankers-return",
+        "title": "Rankers Return",
+        "index_url": "http://www.wuxiaworld.com/novel/rankers-return",
+        "skip_first": false
+    },
+    {
+        "type": "wuxiaworld",
+        "slug": "second-life-ranker",
+        "title": "Second Life Ranker",
+        "index_url": "http://www.wuxiaworld.com/novel/second-life-ranker",
+        "skip_first": false
+    },
+    {
         "type": "wuxiaworld",
         "slug": "the-second-coming-of-gluttony",
         "title": "The Second Coming Of Gluttony",

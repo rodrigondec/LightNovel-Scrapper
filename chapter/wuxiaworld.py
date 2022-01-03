@@ -8,13 +8,13 @@ logging.basicConfig(level=logging.INFO)
 
 class WuxiaChapter(Chapter):
     def process(self):
-        if self.pre_process():
+        if self._loaded_from_cache:
             return
 
         logging.info(f"Processing paragraphs for chapter {self}...")
         self.load_soup()
 
-        chapter_content = self.chapter_soup.find('div', attrs={'id': 'chapter-content'})
+        chapter_content = self._soup.find('div', attrs={'id': 'chapter-content'})
         ps = chapter_content.find_all('p')
 
         if len(ps) <= 10:
@@ -23,6 +23,6 @@ class WuxiaChapter(Chapter):
         ps = [p for p in ps if p.get_text().strip()]
 
         for p in ps:
-            self.paragraphs.append(f"<p>{p.get_text()}</p>")
+            self._paragraphs.append(f"<p>{p.get_text()}</p>")
 
-        self.post_process()
+        self._save_cache()
